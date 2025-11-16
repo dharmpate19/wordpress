@@ -42,3 +42,34 @@ function news_manager_enqueue_assets() {
 }
 add_action('wp_enqueue_scripts', 'news_manager_enqueue_assets');
 
+add_action('rest_api_init', function() {
+    register_rest_route('myplugin/v1', '/news/', array(
+        'methods' => 'GET',
+        'callback' => 'myplugin_get_news',
+        'permission_callback' => '__return_true', // public endpoint
+    ));
+});
+
+function myplugin_get_news($request) {
+    $args = array(
+        'post_type' => 'news',
+        'posts_per_page' => 5,
+    );
+    $query = new WP_Query($args);
+    $data = [];
+
+    while($query->have_posts()) {
+        $query->the_post();
+        $data[] = [
+            'id' => get_the_ID(),
+            'title' => get_the_title(),
+            'content' => get_the_content(),
+            'subtitle' => get_post_meta(get_the_ID(), '_news_subtitle', true)
+        ];
+    }
+
+    wp_reset_postdata();
+    return rest_ensure_response($data);
+}
+
+
