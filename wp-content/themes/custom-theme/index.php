@@ -1,7 +1,11 @@
 <?php
-get_header()
+// Basic fallback, links to home
+get_header();
 ?>
 
- <h1>Hello for the author of the custom-theme</h1>
+<div class="site-container">
+  <h1><?php bloginfo('name'); ?></h1>
+  <p>Welcome. This is the theme fallback (index.php).</p>
+</div>
 
- <?php get_footer() ?>
+<?php get_footer(); ?>
